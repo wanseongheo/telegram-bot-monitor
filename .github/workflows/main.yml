@@ -4,7 +4,7 @@ on:
   schedule:
     # 매시간 0분에 실행 (UTC 기준이므로 한국 시간 -9시간)
     # 아래 예시는 한국 시간 오전 9시(UTC 00:00)에 실행됩니다.
-    - cron: '40 6 * * *' 
+    - cron: '56 6 * * *' 
   workflow_dispatch: # 수동 실행 버튼 활성화
 
 jobs:
@@ -23,4 +23,4 @@ jobs:
         run: pip install requests
 
       - name: 코드실행
-        run: python send_bot.py
+        run: python TeleBot.py
