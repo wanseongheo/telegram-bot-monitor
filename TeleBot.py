@@ -1,9 +1,9 @@
+import os
 import requests
 
 def send_telegram():
-    # 직접 토큰과 ID를 입력 (따옴표 필수)
-    token = "8197870608:AAHP9j9M2xBlVeiXsOYZJ82JzW5eQeJdTO8"
-    chat_id = "-1003664951133" 
+    token = os.getenv("TELEGRAM_TOKEN")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID")
     
     text = "GitHub Actions 자동 실행 테스트 성공!"
     
