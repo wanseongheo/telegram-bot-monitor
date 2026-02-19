@@ -1,23 +1,17 @@
 import requests
 
 def send_telegram():
+    # 직접 토큰과 ID를 입력 (따옴표 필수)
     token = "8197870608:AAHP9j9M2xBlVeiXsOYZJ82JzW5eQeJdTO8"
-    chat_id = "-1003664951133"  # 확인하신 숫자 입력
-    text = "문법 오류 해결! 동기 방식으로 보낸 메시지입니다."
+    chat_id = "-1003664951133" 
+    
+    text = "GitHub Actions 자동 실행 테스트 성공!"
     
     url = f"https://api.telegram.org/bot{token}/sendMessage"
-    params = {
-        "chat_id": chat_id,
-        "text": text
-    }
+    params = {"chat_id": chat_id, "text": text}
     
     response = requests.get(url, params=params)
-    
-    if response.status_code == 200:
-        print("전송 성공!")
-    else:
-        print(f"오류 발생: {response.text}")
+    print(response.json())
 
-# 즉시 실행
 if __name__ == "__main__":
     send_telegram()
