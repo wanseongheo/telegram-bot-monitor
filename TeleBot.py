@@ -16,15 +16,20 @@ def get_cnn_fng():
         return None
 
 def get_status_message(value):
-    """요청하신 4단계 구간별 메시지 설정"""
-    if value <= 25:
-        return f"{value} : 극단적 공포(패닉셀 주의)😱"
-    elif value <= 50:
-        return f"{value} : 공포😨"
-    elif value <= 75:
-        return f"{value} : 탐욕🤩"
+    """
+    공포 탐욕 지수를 5단계로 세분화하여 메시지를 반환합니다.
+    구간 설정: 극단적 공포(20) - 공포(40) - 중립(60) - 탐욕(80) - 극단적 탐욕(100)
+    """
+    if value <= 20:
+        return f"{value} : 극단적 공포 (Extreme Fear) 😱 - 패닉셀 주의 및 저점 매수 검토"
+    elif value <= 40:
+        return f"{value} : 공포 (Fear) 😨 - 부정적인 시장 심리"
+    elif value <= 60:
+        return f"{value} : 중립 (Neutral) 😐 - 방향 탐색 중인 관망 구간"
+    elif value <= 80:
+        return f"{value} : 탐욕 (Greed) 🤩 - 긍정적인 매수세 유입"
     else:
-        return f"{value} : 극단적 탐욕(과열주의)🤑"
+        return f"{value} : 극단적 탐욕 (Extreme Greed) 🤑 - 시장 과열, 분할 익절 고려"
 
 def send_telegram():
     token = os.getenv("TELEGRAM_TOKEN")
@@ -53,3 +58,4 @@ def send_telegram():
 
 if __name__ == "__main__":
     send_telegram()
+
