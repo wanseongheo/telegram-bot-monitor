@@ -1,61 +1,84 @@
 import os
 import requests
 import fear_and_greed
+import yfinance as yf  # VIX 데이터를 위해 추가
 
 def get_cnn_fng():
     """fear-and-greed 라이브러리를 사용하여 실제 CNN 지수를 가져옵니다."""
     try:
-        # CNN에서 데이터를 긁어옵니다.
         index_data = fear_and_greed.get()
-        
-        # 정수 값으로 변환 (예: 42.5 -> 42)
-        value = int(index_data.value)
-        return value
+        return int(index_data.value)
     except Exception as e:
         print(f"CNN 데이터 가져오기 실패: {e}")
         return None
 
-def get_status_message(value):
-    """
-    공포 탐욕 지수를 5단계로 세분화하여 메시지를 반환합니다.
-    구간 설정: 극단적 공포(20) - 공포(40) - 중립(60) - 탐욕(80) - 극단적 탐욕(100)
-    """
-    if value <= 20:
-        return f"{value} : 극단적 공포 (Extreme Fear) 😱 - 패닉셀 주의 및 저점 매수 검토"
-    elif value <= 40:
-        return f"{value} : 공포 (Fear) 😨 - 부정적인 시장 심리"
-    elif value <= 60:
-        return f"{value} : 중립 (Neutral) 😐 - 방향 탐색 중인 관망 구간"
-    elif value <= 80:
-        return f"{value} : 탐욕 (Greed) 🤩 - 긍정적인 매수세 유입"
+def get_vix_index():
+    """yfinance를 사용하여 CBOE Volatility Index (^VIX)를 가져옵니다."""
+    try:
+        vix = yf.Ticker("^VIX")
+        # 가장 최근의 종가를 가져옵니다.
+        vix_value = vix.history(period="1d")['Close'].iloc[-1]
+        return round(vix_value, 2)
+    except Exception as e:
+        print(f"VIX 데이터 가져오기 실패: {e}")
+        return None
+
+def get_fng_status(value):
+    """CNN 공포 탐욕 지수 메시지 구성"""
+    if value <= 25: return f"{value} : 극단적 공포 (Extreme Fear) 😱"
+    elif value <= 44: return f"{value} : 공포 (Fear) 😨"
+    elif value <= 55: return f"{value} : 중립 (Neutral) 😐"
+    elif value <= 75: return f"{value} : 탐욕 (Greed) 🤩"
+    else: return f"{value} : 극단적 탐욕 (Extreme Greed) 🤑"
+
+def get_vix_status(value):
+    """VIX 지수 5단계 상태 메시지 구성"""
+    if value >= 30:
+        return f"{value} : 극단적 변동 (Extreme Volatility) 🌋 - 시장 패닉 상태"
+    elif value >= 20:
+        return f"{value} : 높은 변동 (High Volatility) ⚠️ - 불안정한 시장"
+    elif value >= 15:
+        return f"{value} : 보통 (Normal) ⚖️ - 일반적인 변동성"
+    elif value >= 12:
+        return f"{value} : 안정 (Stable) ✅ - 차분한 시장 분위기"
     else:
-        return f"{value} : 극단적 탐욕 (Extreme Greed) 🤑 - 시장 과열, 분할 익절 고려"
+        return f"{value} : 극단적 안정 (Extremely Calm) 🧘 - 과도한 낙관 경계"
 
 def send_telegram():
     token = os.getenv("TELEGRAM_TOKEN")
     chat_id = os.getenv("TELEGRAM_CHAT_ID")
     
-    # 1. 실제 CNN 인덱스 값 가져오기
+    # 1. 데이터 가져오기
     fng_value = get_cnn_fng()
+    vix_value = get_vix_index()
     
+    # 2. 메시지 조립
+    message_lines = ["📊 [시장 지표 요약]"]
+    
+    # F&G 섹션
     if fng_value is not None:
-        # 2. 메시지 구성
-        status_text = get_status_message(fng_value)
-        text = f"📊 [CNN 공식] Fear & Greed Index\n\n{status_text}"
+        message_lines.append(f"\n✅ Fear & Greed Index\n{get_fng_status(fng_value)}")
     else:
-        text = "❌ CNN 데이터를 불러오는 데 실패했습니다. (라이브러리/사이트 확인 필요)"
+        message_lines.append("\n❌ CNN 데이터 로드 실패")
+        
+    # VIX 섹션
+    if vix_value is not None:
+        message_lines.append(f"\n✅ VIX Index (변동성 지수)\n{get_vix_status(vix_value)}")
+    else:
+        message_lines.append("\n❌ VIX 데이터 로드 실패")
+
+    full_text = "\n".join(message_lines)
 
     # 3. 텔레그램 전송
     url = f"https://api.telegram.org/bot{token}/sendMessage"
-    params = {"chat_id": chat_id, "text": text}
+    params = {"chat_id": chat_id, "text": full_text}
     
     try:
         response = requests.get(url, params=params)
-        response.raise_for_status() # HTTP 에러 발생 시 예외 처리
-        print("메시지 전송 성공!")
+        response.raise_for_status()
+        print("통합 메시지 전송 성공!")
     except Exception as e:
         print(f"텔레그램 전송 실패: {e}")
 
 if __name__ == "__main__":
     send_telegram()
-
