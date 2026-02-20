@@ -4,10 +4,10 @@ on:
   schedule:
     # GitHub Actions의 cron은 UTC 기준입니다. (한국 시간 = UTC + 9시간)
     # 아래 설정은 한국 시간(KST)으로 각각 18:00, 18:20, 18:30에 실행됩니다.
-    - cron: '40 14 * * *'   
-    - cron: '10 14 * * *'  
-    - cron: '20 13 * * *'
+    - cron: '30 13 * * *'   
+    - cron: '30 14 * * *'  
     - cron: '0 0 * * *'
+    - cron: '30 0 * * *'
   workflow_dispatch:      # 수동 실행 버튼 활성화
 
 jobs:
@@ -23,7 +23,8 @@ jobs:
           python-version: '3.9'
 
       - name: 필요한 라이브러리 설치
-        run: pip install requests fear-and-greed
+        # 여기에 fear-and-greed 다음에 띄어쓰기 후 yfinance를 추가했습니다!
+        run: pip install requests fear-and-greed yfinance
 
       - name: 코드 실행
         # 이 부분이 핵심입니다. GitHub Secrets를 파이썬 환경 변수로 매핑합니다.
