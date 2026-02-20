@@ -65,15 +65,15 @@ def get_vix_status(value):
 def get_rsi_status(value):
     """RSI 5단계 구간 상태 메시지 구성"""
     if value > 70:
-        return f"{value} : 과매수 (Overbought) 🔥\n➡️ 단기 과열 상태입니다. 수익 실현 시점을 고려해 보세요."
+        return f"{value} : 과매수 (Overbought) 🔥\n- 단기 과열 상태입니다. 수익 실현 시점을 고려해 보세요."
     elif value >= 56:
-        return f"{value} : 매수 (Buy) 📈\n➡️ 상승 모멘텀이 유지 중입니다. 추세에 편승해 볼 수 있습니다."
+        return f"{value} : 매수 (Buy) 📈\n- 상승 모멘텀이 유지 중입니다. 추세에 편승해 볼 수 있습니다."
     elif value >= 46:
-        return f"{value} : 중립 (Neutral) ⚖️\n➡️ 뚜렷한 방향성이 없는 횡보 구간입니다. 관망을 추천합니다."
+        return f"{value} : 중립 (Neutral) ⚖️\n- 뚜렷한 방향성이 없는 횡보 구간입니다. 관망을 추천합니다."
     elif value >= 30:
-        return f"{value} : 매도 (Sell) 📉\n➡️ 하락 압력이 강한 구간입니다. 리스크 관리에 신경 쓰세요."
+        return f"{value} : 매도 (Sell) 📉\n- 하락 압력이 강한 구간입니다. 리스크 관리에 신경 쓰세요."
     else: # value < 30
-        return f"{value} : 과매도 (Oversold) ❄️\n➡️ 과도한 하락 상태입니다. 반등을 노린 저점 매수 기회를 탐색해 보세요."
+        return f"{value} : 과매도 (Oversold) ❄️\n- 과도한 하락 상태입니다. 반등을 노린 저점 매수 기회를 탐색해 보세요."
 
 def send_telegram():
     token = os.getenv("TELEGRAM_TOKEN")
@@ -120,3 +120,4 @@ def send_telegram():
 
 if __name__ == "__main__":
     send_telegram()
+
