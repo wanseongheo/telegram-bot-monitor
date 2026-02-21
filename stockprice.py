@@ -9,7 +9,7 @@ TOKEN = os.environ.get('TELEGRAM_stockprice_bot_TOKEN')
 CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
 
 # 알림을 받고 싶은 종목 리스트
-STOCKS = ['GOOGL', 'TSLA', 'NVDA', 'BRK.B', 'PWR'] 
+STOCKS = ['GOOGL', 'TSLA', 'NVDA', 'BRKB', 'PWR'] 
 
 async def send_stock_update():
     bot = telegram.Bot(token=TOKEN)
