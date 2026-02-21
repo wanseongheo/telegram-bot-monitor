@@ -1,29 +1,31 @@
-name: Daily Stock Notifier
+name: Telegram Stock Notifier
 
 on:
   schedule:
-    # UTC 기준 (9:00 AM KST는 00:00 UTC)
-    - cron: '0 0,6 * * 1-5' # 월~금 한국시간 오전 9시, 오후 3시 실행
+    # 한국 시간 기준 오전 9시(00:00 UTC), 오후 3시(06:00 UTC) 실행
+    - cron: '0 0,6 * * 1-5'
   workflow_dispatch: # 수동 실행 버튼 활성화
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: 저장소 코드 가져오기
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: ambassadors/setup-python@v4
+      - name: 파이썬 설치
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.10'
 
-      - name: Install dependencies
+      - name: 필요한 라이브러리 설치
         run: |
-          pip install yfinance python-telegram-bot
+          pip install yfinance pandas-ta python-telegram-bot requests
 
-      - name: Run Script
+      - name: 코드 실행
         env:
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_stockprice_bot_TOKEN }}
+          # 파이썬 코드 내부의 os.environ.get()에서 사용하는 이름과 '반드시' 일치시켜야 함
+          TELEGRAM_stockprice_bot_TOKEN: ${{ secrets.TELEGRAM_stockprice_bot_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        # 파일명이 stockprice.py 라면 아래 이름을 수정하세요
         run: python stockprice.py
