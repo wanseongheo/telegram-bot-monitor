@@ -2,9 +2,8 @@ name: Telegram Stock Notifier
 
 on:
   schedule:
-    # 한국 시간 기준 오전 9시(00:00 UTC), 오후 3시(06:00 UTC) 실행
     - cron: '0 0,6 * * 1-5'
-  workflow_dispatch: # 수동 실행 버튼 활성화
+  workflow_dispatch: 
 
 jobs:
   build:
@@ -16,16 +15,18 @@ jobs:
       - name: 파이썬 설치
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.12' # 최신 라이브러리 호환성을 위해 3.12로 상향
 
       - name: 필요한 라이브러리 설치
         run: |
-          pip install yfinance pandas-ta python-telegram-bot requests
+          python -m pip install --upgrade pip
+          pip install yfinance python-telegram-bot requests pandas-ta
+          # 만약 위 명령어가 또 실패하면 pandas-ta 대신 아래 주석을 해제해서 시도하세요.
+          # pip install git+https://github.com/twopirllc/pandas-ta.git
 
       - name: 코드 실행
         env:
-          # 파이썬 코드 내부의 os.environ.get()에서 사용하는 이름과 '반드시' 일치시켜야 함
+          # 파이썬 코드 내부에서 os.environ.get('이름')과 반드시 맞춰야 합니다.
           TELEGRAM_stockprice_bot_TOKEN: ${{ secrets.TELEGRAM_stockprice_bot_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        # 파일명이 stockprice.py 라면 아래 이름을 수정하세요
         run: python stockprice.py
