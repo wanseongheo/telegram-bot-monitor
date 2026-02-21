@@ -44,26 +44,27 @@ def get_sp500_rsi():
         print(f"RSI 데이터 가져오기 실패: {e}")
         return None
 
+# 🌟 수정된 부분: 지표별 짧은 상태 평가 내용(코멘트) 복구
 def get_fng_status(value):
-    if value <= 20: return f"{value} : 극단적 공포 (Extreme Fear) 😱"
-    elif value <= 40: return f"{value} : 공포 (Fear) 😨"
-    elif value <= 60: return f"{value} : 중립 (Neutral) 😐"
-    elif value <= 80: return f"{value} : 탐욕 (Greed) 🤩"
-    else: return f"{value} : 극단적 탐욕 (Extreme Greed) 🤑"
+    if value <= 24: return f"{value} : 극단적 공포 (Extreme Fear) 😱 - 패닉셀 주의 및 저점 매수 검토"
+    elif value <= 44: return f"{value} : 공포 (Fear) 😨 - 부정적인 시장 심리"
+    elif value <= 55: return f"{value} : 중립 (Neutral) 😐 - 방향 탐색 중인 관망 구간"
+    elif value <= 75: return f"{value} : 탐욕 (Greed) 🤩 - 긍정적인 매수세 유입"
+    else: return f"{value} : 극단적 탐욕 (Extreme Greed) 🤑 - 시장 과열, 분할 익절 고려"
 
 def get_vix_status(value):
-    if value >= 30: return f"{value} : 극단적 변동 (Extreme Volatility) 🌋"
-    elif value >= 20: return f"{value} : 높은 변동 (High Volatility) ⚠️"
-    elif value >= 15: return f"{value} : 보통 (Normal) ⚖️"
-    elif value >= 12: return f"{value} : 안정 (Stable) ✅"
-    else: return f"{value} : 극단적 안정 (Extremely Calm) 🧘"
+    if value >= 30: return f"{value} : 극단적 변동 (Extreme Volatility) 🌋 - 시장 패닉 상태"
+    elif value >= 20: return f"{value} : 높은 변동 (High Volatility) ⚠️ - 불안정한 시장"
+    elif value >= 15: return f"{value} : 보통 (Normal) ⚖️ - 일반적인 변동성"
+    elif value >= 12: return f"{value} : 안정 (Stable) ✅ - 차분한 시장 분위기"
+    else: return f"{value} : 극단적 안정 (Extremely Calm) 🧘 - 과도한 낙관 경계"
 
 def get_rsi_status(value):
-    if value > 70: return f"{value} : 과매수 (Overbought) 🔥"
-    elif value >= 56: return f"{value} : 매수 (Buy) 📈"
-    elif value >= 46: return f"{value} : 중립 (Neutral) ⚖️"
-    elif value >= 30: return f"{value} : 매도 (Sell) 📉"
-    else: return f"{value} : 과매도 (Oversold) ❄️"
+    if value > 70: return f"{value} : 과매수 (Overbought) 🔥 - 단기 과열 상태 (수익 실현 고려)"
+    elif value >= 56: return f"{value} : 매수 (Buy) 📈 - 상승 모멘텀 유지"
+    elif value >= 46: return f"{value} : 중립 (Neutral) ⚖️ - 뚜렷한 방향성이 없는 횡보 구간"
+    elif value >= 30: return f"{value} : 매도 (Sell) 📉 - 하락 압력이 강한 구간"
+    else: return f"{value} : 과매도 (Oversold) ❄️ - 과도한 하락 상태 (반등 탐색)"
 
 def analyze_investment_stance(fng, vix, rsi):
     """3가지 지표를 종합하여 투자 스탠스 및 괴리 해석을 제공"""
@@ -83,16 +84,10 @@ def analyze_investment_stance(fng, vix, rsi):
         return "🔴 [최고의 매도 기회 (Euphoria)]\n시장의 광기가 고점입니다! 보수적 방어 및 차익 실현에 집중하세요."
 
     # 2. 지표 간 괴리 (Divergence) 발생 시 특별 해석
-    
-    # 케이스 A: 대중은 공포인데 변동성은 낮음 (가짜 바닥)
     if fng <= 40 and vix < 18:
         return "⚠️ [지표 괴리: 섣부른 바닥론 경계]\n심리는 '공포'지만 실제 변동성(VIX)은 안정적입니다.\n시장이 늪처럼 서서히 하락하는 구간일 수 있으며, 아직 '진짜 투매(바닥)'가 나오지 않았을 확률이 높습니다. 관망을 권장합니다."
-    
-    # 케이스 B: 가격은 매수권인데 심리는 탐욕 (불안한 과열)
     elif rsi <= 55 and fng >= 60:
         return "⚠️ [지표 괴리: 불안한 과열]\n가격(RSI)상 크게 비싸지 않은 구간이나, 투자자들의 심리(F&G)는 이미 탐욕에 차 있습니다.\n추가 상승 여력이 크지 않은 '데드캣 바운스'나 억지 상승장일 수 있으니 신규 진입은 신중하세요."
-    
-    # 케이스 C: VIX를 안전장치로 활용 (떨어지는 칼날)
     elif rsi <= 45 and vix >= 25:
         return "⚠️ [지표 괴리: 떨어지는 칼날]\n기술적 지표(RSI)는 매수 구간을 가리키지만, 변동성(VIX)이 급등하고 있습니다.\n강력한 하락 압력이 진행 중이니 VIX가 진정될 때까지 절대 매수를 보류하세요."
 
