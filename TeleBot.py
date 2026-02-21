@@ -2,7 +2,7 @@ import os
 import requests
 import fear_and_greed
 import yfinance as yf
-import pandas as pd  # RSI 계산을 위해 추가 (yfinance와 함께 자동 설치됨)
+import pandas as pd
 
 def get_cnn_fng():
     """CNN 공포 탐욕 지수 가져오기"""
@@ -27,53 +27,78 @@ def get_sp500_rsi():
     """S&P 500 (^GSPC)의 14일 RSI 지수 계산하기"""
     try:
         sp500 = yf.Ticker("^GSPC")
-        # 14일 RSI를 구하기 위해 넉넉하게 최근 3개월 데이터를 불러옵니다.
         hist = sp500.history(period="3mo")
         delta = hist['Close'].diff()
         
-        # 상승분과 하락분 분리
         up = delta.clip(lower=0)
         down = -1 * delta.clip(upper=0)
         
-        # 지수이동평균(EMA)을 활용한 14일 평균 계산 (Wilder's 방식)
         ema_up = up.ewm(com=13, adjust=False).mean()
         ema_down = down.ewm(com=13, adjust=False).mean()
         
         rs = ema_up / ema_down
         rsi = 100 - (100 / (1 + rs))
         
-        # 가장 최근(오늘)의 RSI 값을 반환
         return round(rsi.iloc[-1], 2)
     except Exception as e:
         print(f"RSI 데이터 가져오기 실패: {e}")
         return None
 
 def get_fng_status(value):
-    if value <= 20: return f"{value} : 극단적 공포 (Extreme Fear) 😱 - 패닉셀 주의 및 저점 매수 검토"
-    elif value <= 40: return f"{value} : 공포 (Fear) 😨 - 부정적인 시장 심리"
-    elif value <= 60: return f"{value} : 중립 (Neutral) 😐 - 방향 탐색 중인 관망 구간"
-    elif value <= 80: return f"{value} : 탐욕 (Greed) 🤩 - 긍정적인 매수세 유입"
-    else: return f"{value} : 극단적 탐욕 (Extreme Greed) 🤑 - 시장 과열, 분할 익절 고려"
+    if value <= 20: return f"{value} : 극단적 공포 (Extreme Fear) 😱"
+    elif value <= 40: return f"{value} : 공포 (Fear) 😨"
+    elif value <= 60: return f"{value} : 중립 (Neutral) 😐"
+    elif value <= 80: return f"{value} : 탐욕 (Greed) 🤩"
+    else: return f"{value} : 극단적 탐욕 (Extreme Greed) 🤑"
 
 def get_vix_status(value):
-    if value >= 30: return f"{value} : 극단적 변동 (Extreme Volatility) 🌋 - 시장 패닉 상태"
-    elif value >= 20: return f"{value} : 높은 변동 (High Volatility) ⚠️ - 불안정한 시장"
-    elif value >= 15: return f"{value} : 보통 (Normal) ⚖️ - 일반적인 변동성"
-    elif value >= 12: return f"{value} : 안정 (Stable) ✅ - 차분한 시장 분위기"
-    else: return f"{value} : 극단적 안정 (Extremely Calm) 🧘 - 과도한 낙관 경계"
+    if value >= 30: return f"{value} : 극단적 변동 (Extreme Volatility) 🌋"
+    elif value >= 20: return f"{value} : 높은 변동 (High Volatility) ⚠️"
+    elif value >= 15: return f"{value} : 보통 (Normal) ⚖️"
+    elif value >= 12: return f"{value} : 안정 (Stable) ✅"
+    else: return f"{value} : 극단적 안정 (Extremely Calm) 🧘"
 
 def get_rsi_status(value):
-    """RSI 5단계 구간 상태 메시지 구성"""
-    if value > 70:
-        return f"{value} : 과매수 (Overbought) 🔥\n- 단기 과열 상태입니다. 수익 실현 시점을 고려해 보세요."
-    elif value >= 56:
-        return f"{value} : 매수 (Buy) 📈\n- 상승 모멘텀이 유지 중입니다. 추세에 편승해 볼 수 있습니다."
-    elif value >= 46:
-        return f"{value} : 중립 (Neutral) ⚖️\n- 뚜렷한 방향성이 없는 횡보 구간입니다. 관망을 추천합니다."
-    elif value >= 30:
-        return f"{value} : 매도 (Sell) 📉\n- 하락 압력이 강한 구간입니다. 리스크 관리에 신경 쓰세요."
-    else: # value < 30
-        return f"{value} : 과매도 (Oversold) ❄️\n- 과도한 하락 상태입니다. 반등을 노린 저점 매수 기회를 탐색해 보세요."
+    if value > 70: return f"{value} : 과매수 (Overbought) 🔥"
+    elif value >= 56: return f"{value} : 매수 (Buy) 📈"
+    elif value >= 46: return f"{value} : 중립 (Neutral) ⚖️"
+    elif value >= 30: return f"{value} : 매도 (Sell) 📉"
+    else: return f"{value} : 과매도 (Oversold) ❄️"
+
+def analyze_investment_stance(fng, vix, rsi):
+    """3가지 지표를 종합하여 투자 스탠스 및 괴리 해석을 제공"""
+    if fng is None or vix is None or rsi is None:
+        return "⚠️ 데이터 누락으로 종합 분석을 수행할 수 없습니다."
+
+    # 1. 명확한 종합 시장 국면 (완벽히 일치하는 경우)
+    if fng <= 25 and vix >= 30 and rsi <= 30:
+        return "🟢 [최고의 매수 기회 (Capitulation)]\n시장의 항복이 일어났습니다. 우량 자산을 헐값에 매수할 기회! 현금 비중을 최소화하고 적극 매수를 고려하세요."
+    elif 25 < fng <= 44 and 20 <= vix < 30 and 30 < rsi <= 50:
+        return "🟡 [조정 국면 진입 (Correction)]\n하방 위험을 열어두고 지지선을 확인하며 분할 매수로 보수적으로 접근하세요."
+    elif 45 <= fng <= 55 and 15 <= vix < 20 and 45 <= rsi <= 55:
+        return "⚪ [정상적 추세 (Normal)]\n시장이 안정적입니다. 포트폴리오 비중을 규칙에 따라 유지하세요."
+    elif 56 <= fng <= 75 and 12 <= vix < 15 and 50 < rsi <= 70:
+        return "🟠 [과열 주의 (Overheating)]\n수익을 확정 짓기 시작하며 현금 비중을 점진적으로 높이세요."
+    elif fng > 75 and vix < 12 and rsi > 70:
+        return "🔴 [최고의 매도 기회 (Euphoria)]\n시장의 광기가 고점입니다! 보수적 방어 및 차익 실현에 집중하세요."
+
+    # 2. 지표 간 괴리 (Divergence) 발생 시 특별 해석
+    
+    # 케이스 A: 대중은 공포인데 변동성은 낮음 (가짜 바닥)
+    if fng <= 40 and vix < 18:
+        return "⚠️ [지표 괴리: 섣부른 바닥론 경계]\n심리는 '공포'지만 실제 변동성(VIX)은 안정적입니다.\n시장이 늪처럼 서서히 하락하는 구간일 수 있으며, 아직 '진짜 투매(바닥)'가 나오지 않았을 확률이 높습니다. 관망을 권장합니다."
+    
+    # 케이스 B: 가격은 매수권인데 심리는 탐욕 (불안한 과열)
+    elif rsi <= 55 and fng >= 60:
+        return "⚠️ [지표 괴리: 불안한 과열]\n가격(RSI)상 크게 비싸지 않은 구간이나, 투자자들의 심리(F&G)는 이미 탐욕에 차 있습니다.\n추가 상승 여력이 크지 않은 '데드캣 바운스'나 억지 상승장일 수 있으니 신규 진입은 신중하세요."
+    
+    # 케이스 C: VIX를 안전장치로 활용 (떨어지는 칼날)
+    elif rsi <= 45 and vix >= 25:
+        return "⚠️ [지표 괴리: 떨어지는 칼날]\n기술적 지표(RSI)는 매수 구간을 가리키지만, 변동성(VIX)이 급등하고 있습니다.\n강력한 하락 압력이 진행 중이니 VIX가 진정될 때까지 절대 매수를 보류하세요."
+
+    # 3. 그 외 애매한 혼조세
+    else:
+        return "⚖️ [지표 혼조세 / 다수결 리스크 관리]\n지표들이 서로 엇갈린 신호를 보내고 있습니다. 시장이 방향을 정하지 못했으므로, 투자 비중을 평소의 50% 이하로 축소하고 확인 후 대응하세요."
 
 def send_telegram():
     token = os.getenv("TELEGRAM_TOKEN")
@@ -85,25 +110,19 @@ def send_telegram():
     rsi_value = get_sp500_rsi()
     
     # 2. 메시지 조립
-    message_lines = ["📊 [Daily 시장 지표 요약]"]
+    message_lines = ["📊 [Daily 시장 지표 & 투자 가이드]"]
+    message_lines.append("-" * 30)
     
-    # F&G 섹션
-    if fng_value is not None:
-        message_lines.append(f"\n1️⃣ Fear & Greed Index\n{get_fng_status(fng_value)}")
-    else:
-        message_lines.append("\n1️⃣ Fear & Greed Index: 로드 실패 ❌")
-        
-    # VIX 섹션
-    if vix_value is not None:
-        message_lines.append(f"\n2️⃣ VIX Index (변동성)\n{get_vix_status(vix_value)}")
-    else:
-        message_lines.append("\n2️⃣ VIX Index: 로드 실패 ❌")
+    # 각 지표 상태 요약
+    message_lines.append(f"1️⃣ F&G 심리: {get_fng_status(fng_value) if fng_value is not None else '로드 실패 ❌'}")
+    message_lines.append(f"2️⃣ VIX 변동: {get_vix_status(vix_value) if vix_value is not None else '로드 실패 ❌'}")
+    message_lines.append(f"3️⃣ RSI(14) : {get_rsi_status(rsi_value) if rsi_value is not None else '로드 실패 ❌'}")
+    message_lines.append("-" * 30)
 
-    # RSI 섹션
-    if rsi_value is not None:
-        message_lines.append(f"\n3️⃣ S&P 500 RSI(14)\n{get_rsi_status(rsi_value)}")
-    else:
-        message_lines.append("\n3️⃣ S&P 500 RSI: 로드 실패 ❌")
+    # 🌟 스탠스 분석 (핵심 추가 파트)
+    stance_message = analyze_investment_stance(fng_value, vix_value, rsi_value)
+    message_lines.append("🤖 [투자 파트너의 스탠스 제안]")
+    message_lines.append(stance_message)
 
     full_text = "\n".join(message_lines)
 
@@ -120,4 +139,3 @@ def send_telegram():
 
 if __name__ == "__main__":
     send_telegram()
-
