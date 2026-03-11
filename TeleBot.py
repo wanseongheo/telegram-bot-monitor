@@ -46,25 +46,25 @@ def get_sp500_rsi():
 
 # 🌟 수정된 부분: 지표별 짧은 상태 평가 내용(코멘트) 복구
 def get_fng_status(value):
-    if value <= 24: return f"{value} : 극단적 공포 (Extreme Fear) 😱 - 패닉셀 주의 및 저점 매수 검토"
-    elif value <= 44: return f"{value} : 공포 (Fear) 😨 - 부정적인 시장 심리"
-    elif value <= 55: return f"{value} : 중립 (Neutral) 😐 - 방향 탐색 중인 관망 구간"
-    elif value <= 75: return f"{value} : 탐욕 (Greed) 🤩 - 긍정적인 매수세 유입"
+    if value <= 24: return f"'{value}' : 극단적 공포 (Extreme Fear) 😱 - 패닉셀 주의 및 저점 매수 검토"
+    elif value <= 44: return f"'{value}' : 공포 (Fear) 😨 - 부정적인 시장 심리"
+    elif value <= 55: return f"'{value}'': 중립 (Neutral) 😐 - 방향 탐색 중인 관망 구간"
+    elif value <= 75: return f"'{value}' : 탐욕 (Greed) 🤩 - 긍정적인 매수세 유입"
     else: return f"{value} : 극단적 탐욕 (Extreme Greed) 🤑 - 시장 과열, 분할 익절 고려"
 
 def get_vix_status(value):
-    if value >= 30: return f"{value} : 극단적 변동 (Extreme Volatility) 🌋 - 시장 패닉 상태"
-    elif value >= 20: return f"{value} : 높은 변동 (High Volatility) ⚠️ - 불안정한 시장"
-    elif value >= 15: return f"{value} : 보통 (Normal) ⚖️ - 일반적인 변동성"
-    elif value >= 12: return f"{value} : 안정 (Stable) ✅ - 차분한 시장 분위기"
-    else: return f"{value} : 극단적 안정 (Extremely Calm) 🧘 - 과도한 낙관 경계"
+    if value >= 30: return f"'{value}' : 극단적 변동 (Extreme Volatility) 🌋 - 시장 패닉 상태"
+    elif value >= 20: return f"'{value}' : 높은 변동 (High Volatility) ⚠️ - 불안정한 시장"
+    elif value >= 15: return f"'{value}' : 보통 (Normal) ⚖️ - 일반적인 변동성"
+    elif value >= 12: return f"'{value}' : 안정 (Stable) ✅ - 차분한 시장 분위기"
+    else: return f"'{value}' : 극단적 안정 (Extremely Calm) 🧘 - 과도한 낙관 경계"
 
 def get_rsi_status(value):
-    if value > 70: return f"{value} : 과매수 (Overbought) 🔥 - 단기 과열 상태 (수익 실현 고려)"
-    elif value >= 56: return f"{value} : 매수 (Buy) 📈 - 상승 모멘텀 유지"
-    elif value >= 46: return f"{value} : 중립 (Neutral) ⚖️ - 뚜렷한 방향성이 없는 횡보 구간"
-    elif value >= 30: return f"{value} : 매도 (Sell) 📉 - 하락 압력이 강한 구간"
-    else: return f"{value} : 과매도 (Oversold) ❄️ - 과도한 하락 상태 (반등 탐색)"
+    if value > 70: return f"'{value}' : 과매수 (Overbought) 🔥 - 단기 과열 상태 (수익 실현 고려)"
+    elif value >= 56: return f"'{value}' : 매수 (Buy) 📈 - 상승 모멘텀 유지"
+    elif value >= 46: return f"'{value}' : 중립 (Neutral) ⚖️ - 뚜렷한 방향성이 없는 횡보 구간"
+    elif value >= 30: return f"'{value}' : 매도 (Sell) 📉 - 하락 압력이 강한 구간"
+    else: return f"'{value}' : 과매도 (Oversold) ❄️ - 과도한 하락 상태 (반등 탐색)"
 
 def analyze_investment_stance(fng, vix, rsi):
     """3가지 지표를 종합하여 투자 스탠스 및 괴리 해석을 제공"""
@@ -106,6 +106,7 @@ def send_telegram():
     
     # 2. 메시지 조립
     message_lines = ["📊 [Daily 시장 지표 & 투자 가이드]"]
+    message_lines = ["변동성[VIX]범위: 12안정, 15보통, 20변동, 30극단적변동"]
     message_lines.append("-" * 30)
     
     # 각 지표 상태 요약
@@ -134,3 +135,4 @@ def send_telegram():
 
 if __name__ == "__main__":
     send_telegram()
+
