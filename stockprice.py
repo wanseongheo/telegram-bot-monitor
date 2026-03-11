@@ -9,7 +9,7 @@ TOKEN = os.environ.get('TELEGRAM_stockprice_bot_TOKEN')
 CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
 
 # 알림 종목 리스트
-STOCKS = ['GOOGL', 'TSLA', 'NVDA', 'BRKB', 'PWR', 'VOO'] 
+STOCKS = ['GOOGL', 'TSLA', 'NVDA', 'BRKB', 'PWR', 'VOO', 'JEPI'] 
 
 async def send_stock_update():
     bot = telegram.Bot(token=TOKEN)
