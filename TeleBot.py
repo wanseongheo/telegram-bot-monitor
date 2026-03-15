@@ -106,7 +106,7 @@ def send_telegram():
     
     # 2. 메시지 조립
     message_lines = ["📊 [Daily 시장 지표 & 투자 가이드]"]
-    message_lines.append(["변동성[VIX]범위: 12안정, 15보통, 20변동, 30극단적변동"])
+    message_lines.append("[변동성[VIX]범위: 12안정, 15보통, 20변동, 30극단적변동]")
     message_lines.append("-" * 30)
     
     # 각 지표 상태 요약
