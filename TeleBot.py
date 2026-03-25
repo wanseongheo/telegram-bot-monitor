@@ -53,7 +53,7 @@ def get_fng_status(value):
     else: return f"`{value}` : *극단적 탐욕 (Extreme Greed)* 🤑 - 시장 과열, 분할 익절 고려"
 
 def get_vix_status(value):
-    if value >= 30: return f"`{value}` : *극단적 변동 (Extreme Volatility)* 🌋 - 시장 패닉 상태"
+    if value >= 26: return f"`{value}` : *극단적 변동 (Extreme Volatility)* 🌋 - 시장 패닉 상태"
     elif value >= 20: return f"`{value}` : *높은 변동 (High Volatility)* ⚠️ - 불안정한 시장"
     elif value >= 15: return f"`{value}` : *보통 (Normal)* ⚖️ - 일반적인 변동성"
     elif value >= 12: return f"`{value}` : *안정 (Stable)* ✅ - 차분한 시장 분위기"
@@ -71,7 +71,7 @@ def analyze_investment_stance(fng, vix, rsi):
     if fng is None or vix is None or rsi is None:
         return "⚠️ 데이터 누락으로 종합 분석을 수행할 수 없습니다."
 
-    if fng <= 25 and vix >= 30 and rsi <= 30:
+    if fng <= 25 and vix >= 26 and rsi <= 30:
         return "🟢 *[최고의 매수 기회 (Capitulation)]*\n시장의 항복이 일어났습니다. 우량 자산을 헐값에 매수할 기회! 현금 비중을 최소화하고 적극 매수를 고려하세요."
     elif 25 < fng <= 44 and 20 <= vix < 30 and 30 < rsi <= 50:
         return "🟡 *[조정 국면 진입 (Correction)]*\n하방 위험을 열어두고 지지선을 확인하며 분할 매수로 보수적으로 접근하세요."
@@ -86,7 +86,7 @@ def analyze_investment_stance(fng, vix, rsi):
         return "⚠️ *[지표 괴리: 섣부른 바닥론 경계]*\n심리는 '공포'지만 실제 변동성(VIX)은 안정적입니다.\n시장이 늪처럼 서서히 하락하는 구간일 수 있으며, 아직 '진짜 투매(바닥)'가 나오지 않았을 확률이 높습니다. 관망을 권장합니다."
     elif rsi <= 55 and fng >= 60:
         return "⚠️ *[지표 괴리: 불안한 과열]*\n가격(RSI)상 크게 비싸지 않은 구간이나, 투자자들의 심리(F&G)는 이미 탐욕에 차 있습니다.\n추가 상승 여력이 크지 않은 '데드캣 바운스'나 억지 상승장일 수 있으니 신규 진입은 신중하세요."
-    elif rsi <= 45 and vix >= 25:
+    elif rsi <= 45 and vix >= 26:
         return "⚠️ *[지표 괴리: 떨어지는 칼날]*\n기술적 지표(RSI)는 매수 구간을 가리키지만, 변동성(VIX)이 급등하고 있습니다.\n강력한 하락 압력이 진행 중이니 VIX가 진정될 때까지 절대 매수를 보류하세요."
     
     return "⚖️ *[지표 혼조세 / 다수결 리스크 관리]*\n지표들이 서로 엇갈린 신호를 보내고 있습니다. 시장이 방향을 정하지 못했으므로, 투자 비중을 평소의 50% 이하로 축소하고 확인 후 대응하세요."
@@ -101,7 +101,7 @@ def send_telegram():
     
     message_lines = [
         "📊 *[Daily 시장 지표 & 투자 가이드]*",
-        "_💡 변동성[VIX]범위: 12안정, 15보통, 20변동, 30극단적변동_",
+        "_💡 변동성[VIX]범위: 12안정, 15보통, 20변동, 26극단적변동_",
         "------------------------------"
     ]
     
